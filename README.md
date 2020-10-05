@@ -37,6 +37,6 @@ python main.py s1_path s2_path ms_path pan_path gt_path
 
 - number of epochs: `-ep` default value `1000`
 
-- number of per source features: `-nf` default value `128`
+- control the number of per source features: `-nf` default value `128` to have 128$\times$2=256 features for each source
 
-- how to fuse the per source feature: `-f` default value `concat` (Concatenation, Addition also available)
+- how to fuse the per source feature: `-f` default value `concat` for Concatenation  (`add` Addition also available)
