@@ -4,6 +4,7 @@ import tensorflow as tf
 from src.utils import get_batch, get_iteration
 from sklearn.utils import shuffle
 from sklearn.metrics import accuracy_score,f1_score,cohen_kappa_score
+from tqdm import tqdm
 
 def train_info (model,checkpoint_path,epoch,train_loss,train_acc,valid_loss,valid_acc,elapsed,best_acc,valid_y,pred):
     '''
@@ -14,7 +15,7 @@ def train_info (model,checkpoint_path,epoch,train_loss,train_acc,valid_loss,vali
     if valid_acc.result() > best_acc :
         print ( f1_score (valid_y,pred,average=None) )
         model.save_weights(checkpoint_path)
-        print (f'Model saved {checkpoint_path}')
+        print (f'{valid_acc.name} improved from {best_acc} to {valid_acc.result()}, saving to {checkpoint_path}')
         best_acc = valid_acc.result()
             
         # Reset metrics for the next epoch
@@ -92,7 +93,7 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
         for epoch in range(n_epochs):
             start = time.time()
             train_S1, train_S2, train_MS, train_Pan, train_y = shuffle(train_S1, train_S2, train_MS, train_Pan, train_y, random_state=0)
-            for batch in range(train_iter):
+            for batch in tqdm(range(train_iter)):
                 batch_s1 = get_batch (train_S1,batch,batch_size)
                 batch_s2 = get_batch (train_S2,batch,batch_size)
                 batch_ms = get_batch (train_MS,batch,batch_size)
@@ -101,7 +102,7 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
                 train_step(model,batch_s1,batch_s2,batch_ms,batch_pan,batch_y,loss_function,optimizer,train_loss,train_acc,sensor,weight,is_training=True)
                 del batch_s1,batch_s2,batch_ms,batch_pan,batch_y
             pred = []
-            for batch in range(valid_iter):
+            for batch in tqdm(range(valid_iter)):
                 batch_s1 = get_batch (valid_S1,batch,batch_size)
                 batch_s2 = get_batch (valid_S2,batch,batch_size)
                 batch_ms = get_batch (valid_MS,batch,batch_size)
@@ -119,14 +120,14 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
         for epoch in range(n_epochs):
             start = time.time()
             train_S1, train_S2, train_y = shuffle(train_S1, train_S2, train_y, random_state=0)
-            for batch in range(train_iter):
+            for batch in tqdm(range(train_iter)):
                 batch_s1 = get_batch (train_S1,batch,batch_size)
                 batch_s2 = get_batch (train_S2,batch,batch_size)
                 batch_y = get_batch (train_y,batch,batch_size)
                 train_step(model,batch_s1,batch_s2,None,None,batch_y,loss_function,optimizer,train_loss,train_acc,sensor,weight,is_training=True)
                 del batch_s1,batch_s2,batch_y
             pred = []
-            for batch in range(valid_iter):
+            for batch in tqdm(range(valid_iter)):
                 batch_s1 = get_batch (valid_S1,batch,batch_size)
                 batch_s2 = get_batch (valid_S2,batch,batch_size)
                 batch_y = get_batch (valid_y,batch,batch_size)
@@ -142,7 +143,7 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
         for epoch in range(n_epochs):
             start = time.time()
             train_S2, train_MS, train_Pan, train_y = shuffle(train_S2, train_MS, train_Pan, train_y, random_state=0)
-            for batch in range(train_iter):
+            for batch in tqdm(range(train_iter)):
                 batch_s2 = get_batch (train_S2,batch,batch_size)
                 batch_ms = get_batch (train_MS,batch,batch_size)
                 batch_pan = get_batch (train_Pan,batch,batch_size)
@@ -150,7 +151,7 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
                 train_step(model,None,batch_s2,batch_ms,batch_pan,batch_y,loss_function,optimizer,train_loss,train_acc,sensor,weight,is_training=True)
                 del batch_s2,batch_ms,batch_pan,batch_y
             pred = []
-            for batch in range(valid_iter):
+            for batch in tqdm(range(valid_iter)):
                 batch_s2 = get_batch (valid_S2,batch,batch_size)
                 batch_ms = get_batch (valid_MS,batch,batch_size)
                 batch_pan = get_batch (valid_Pan,batch,batch_size)
@@ -167,13 +168,13 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
         for epoch in range(n_epochs):
             start = time.time()
             train_S1, train_y = shuffle(train_S1, train_y, random_state=0)
-            for batch in range(train_iter):
+            for batch in tqdm(range(train_iter)):
                 batch_s1 = get_batch (train_S1,batch,batch_size)
                 batch_y = get_batch (train_y,batch,batch_size)
                 train_step(model,batch_s1,None,None,None,batch_y,loss_function,optimizer,train_loss,train_acc,sensor,weight,is_training=True)
                 del batch_s1,batch_y
             pred = []
-            for batch in range(valid_iter):
+            for batch in tqdm(range(valid_iter)):
                 batch_s1 = get_batch (valid_S1,batch,batch_size)
                 batch_y = get_batch (valid_y,batch,batch_size)
                 batch_pred = train_step(model,batch_s1,None,None,None,batch_y,loss_function,optimizer,valid_loss,valid_acc,sensor,weight,is_training=False)
@@ -188,13 +189,13 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
         for epoch in range(n_epochs):
             start = time.time()
             train_S2, train_y = shuffle(train_S2, train_y, random_state=0)
-            for batch in range(train_iter):
+            for batch in tqdm(range(train_iter)):
                 batch_s2 = get_batch (train_S2,batch,batch_size)
                 batch_y = get_batch (train_y,batch,batch_size)
                 train_step(model,None,batch_s2,None,None,batch_y,loss_function,optimizer,train_loss,train_acc,sensor,weight,is_training=True)
                 del batch_s2,batch_y
             pred = []
-            for batch in range(valid_iter):
+            for batch in tqdm(range(valid_iter)):
                 batch_s2 = get_batch (valid_S2,batch,batch_size)
                 batch_y = get_batch (valid_y,batch,batch_size)
                 batch_pred = train_step(model,None,batch_s2,None,None,batch_y,loss_function,optimizer,valid_loss,valid_acc,sensor,weight,is_training=False)
@@ -209,14 +210,14 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
         for epoch in range(n_epochs):
             start = time.time()
             train_MS, train_Pan, train_y = shuffle(train_MS, train_Pan, train_y, random_state=0)
-            for batch in range(train_iter):
+            for batch in tqdm(range(train_iter)):
                 batch_ms = get_batch (train_MS,batch,batch_size)
                 batch_pan = get_batch (train_Pan,batch,batch_size)
                 batch_y = get_batch (train_y,batch,batch_size)
                 train_step(model,None,None,batch_ms,batch_pan,batch_y,loss_function,optimizer,train_loss,train_acc,sensor,weight,is_training=True)
                 del batch_ms,batch_pan,batch_y
             pred = []
-            for batch in range(valid_iter):
+            for batch in tqdm(range(valid_iter)):
                 batch_ms = get_batch (valid_MS,batch,batch_size)
                 batch_pan = get_batch (valid_Pan,batch,batch_size)
                 batch_y = get_batch (valid_y,batch,batch_size)
