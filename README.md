@@ -36,3 +36,7 @@ python main.py s1_path s2_path ms_path pan_path gt_path
 - learning rate: `-lr`default value `0.0001`
 
 - number of epochs: `-ep` default value `1000`
+
+- number of per source features: `-nf` default value `128`
+
+- how to fuse the per source feature: `-f` default value `concat` (Concatenation, Addition also available)

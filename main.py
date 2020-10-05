@@ -30,6 +30,8 @@ if __name__ == '__main__':
     parser.add_argument('-lr','--learning_rate',dest='learning_rate',help='Learning rate',default=1E-4,type=float)
     parser.add_argument('-drop','--dropout_rate',dest='dropout_rate',help='Dropout rate',default=0.5,type=float)
     parser.add_argument('-w','--weight',dest='weight',help='Weight for auxiliary classifiers',default=0.3,type=float)
+    parser.add_argument('-f','--fusion',dest='fusion',help='How to fuse per source features ?',choices=['add','concat'],default='concat')
+    parser.add_argument('-nf','--num_feat',dest='num_feat',help='Number of per source features',default=128,type=float)
     args = parser.parse_args()
 
     # Get argument values
@@ -48,6 +50,8 @@ if __name__ == '__main__':
     lr = args.learning_rate
     drop = args.dropout_rate
     weight = args.weight
+    fusion = args.fusion
+    num_feat = args.num_feat
     
     # Create output path if does not exist
     Path(out_path).mkdir(parents=True, exist_ok=True) 
@@ -95,17 +99,17 @@ if __name__ == '__main__':
 
     # Create the Tensorflow model
     if len (sensor) == 3:
-        model = Model_S1S2SPOT (drop,n_classes)
+        model = Model_S1S2SPOT (drop,n_classes,num_feat,fusion)
     elif len (sensor) == 2 and 's1' in sensor and 's2' in sensor :
-        model = Model_S1S2 (drop,n_classes)
+        model = Model_S1S2 (drop,n_classes,num_feat,fusion)
     elif len (sensor) == 2 and 's2' in sensor and 'spot' in sensor :
-        model = Model_S2SPOT (drop,n_classes)
+        model = Model_S2SPOT (drop,n_classes,num_feat,fusion)
     elif len (sensor) == 1 and 's1' in sensor :
-        model = Model_S1 (drop,n_classes)
+        model = Model_S1 (drop,n_classes,num_feat)
     elif len (sensor) == 1 and 's2' in sensor :
-        model = Model_S2 (drop,n_classes)
+        model = Model_S2 (drop,n_classes,num_feat)
     elif len (sensor) == 1 and 'spot' in sensor :
-        model = Model_SPOT (drop,n_classes)
+        model = Model_SPOT (drop,n_classes,num_feat)
 
     # Learning stage
     checkpoint_path = os.path.join(out_path,'model') 

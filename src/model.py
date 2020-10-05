@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.keras.layers import Layer, Dense, Activation, Dropout, BatchNormalization, Concatenate, Conv1D, Conv2D, GlobalAveragePooling1D, GlobalAveragePooling2D, MaxPooling2D
+from tensorflow.keras.layers import Layer, Dense, Activation, Dropout, BatchNormalization, Concatenate, Add, Conv1D, Conv2D, GlobalAveragePooling1D, GlobalAveragePooling2D, MaxPooling2D
 tf.keras.backend.set_floatx('float32')
 
 class Conv1DBlock(tf.keras.Model):
@@ -129,12 +129,15 @@ class Model_S1S2SPOT(tf.keras.Model):
     '''
     Model for Sentinel-1, Sentinel-2 and SPOT fusion
     '''
-    def __init__(self,drop,n_classes,n_filters=128,num_units=512):
+    def __init__(self,drop,n_classes,n_filters,fusion,num_units=512):
         super(Model_S1S2SPOT, self).__init__(name='Model_S1S2SPOT')
         self.s1_branch = S1_Branch(n_filters,drop)
         self.s2_branch = S2_Branch(n_filters,drop)
         self.spot_branch = Spot_Branch(n_filters,drop)
-        self.concat = Concatenate()
+        if fusion == 'concat':
+            self.fusion = Concatenate()
+        elif fusion == 'add'
+            self.fusion = Add()
         self.dense1 = FC(num_units)
         self.dense2 = FC(num_units)
         self.softmax1 = SoftMax(n_classes)
@@ -145,29 +148,32 @@ class Model_S1S2SPOT(tf.keras.Model):
         feat_s1 = self.s1_branch(x_s1,is_training)
         feat_s2 = self.s2_branch(x_s2,is_training)
         feat_spot = self.spot_branch(x_ms,x_pan,is_training)
-        feat_concat = self.concat([feat_s1,feat_s2,feat_spot])
-        concat_pred = self.softmax1( self.dense2( self.dense1(feat_concat) ) )
+        feat_fused = self.fusion([feat_s1,feat_s2,feat_spot])
+        fused_pred = self.softmax1( self.dense2( self.dense1(feat_fused) ) )
         s1_pred = self.softmax2(feat_s1)
         s2_pred = self.softmax3(feat_s2)
         spot_pred = self.softmax4(feat_spot)
-        return s1_pred,s2_pred,spot_pred,concat_pred
+        return s1_pred,s2_pred,spot_pred,fused_pred
     def getEmbedding(self, x_s1, x_s2, x_ms, x_pan, is_training=False):
         feat_spot = self.spot_branch(x_ms,x_pan,is_training)
         feat_s1 = self.s1_branch(x_s1,is_training)
         feat_s2 = self.s2_branch(x_s2,is_training)
-        feat_concat = self.concat([feat_s1,feat_s2,feat_spot])
-        embedding = self.dense2( self.dense1(feat_concat) )
+        feat_fused = self.fusion([feat_s1,feat_s2,feat_spot])
+        embedding = self.dense2( self.dense1(feat_fused) )
         return embedding
 
 class Model_S1S2(tf.keras.Model):
     '''
     Model for Sentinel-1 and Sentinel-2 fusion
     '''
-    def __init__(self,drop,n_classes,n_filters=128,num_units=512):
+    def __init__(self,drop,n_classes,n_filters,fusion,num_units=512):
         super(Model_S1S2, self).__init__(name='Model_S1S2')
         self.s1_branch = S1_Branch(n_filters,drop)
         self.s2_branch = S2_Branch(n_filters,drop)
-        self.concat = Concatenate()
+        if fusion == 'concat':
+            self.fusion = Concatenate()
+        elif fusion == 'add':
+            self.fusion = Add()
         self.dense1 = FC(num_units)
         self.dense2 = FC(num_units)
         self.softmax1 = SoftMax(n_classes)
@@ -176,27 +182,30 @@ class Model_S1S2(tf.keras.Model):
     def call(self,x_s1, x_s2, is_training):
         feat_s1 = self.s1_branch(x_s1,is_training)
         feat_s2 = self.s2_branch(x_s2,is_training)
-        feat_concat = self.concat([feat_s1,feat_s2])
-        concat_pred = self.softmax1( self.dense2( self.dense1(feat_concat) ) )
+        feat_fused = self.fusion([feat_s1,feat_s2])
+        fused_pred = self.softmax1( self.dense2( self.dense1(feat_fused) ) )
         s1_pred = self.softmax2(feat_s1)
         s2_pred = self.softmax3(feat_s2)
-        return s1_pred,s2_pred,concat_pred
+        return s1_pred,s2_pred,fused_pred
     def getEmbedding(self, x_s1, x_s2, is_training=False):
         feat_s1 = self.s1_branch(x_s1,is_training)
         feat_s2 = self.s2_branch(x_s2,is_training)
-        feat_concat = self.concat([feat_s1,feat_s2])
-        embedding = self.dense2( self.dense1(feat_concat) )
+        feat_fused = self.fusion([feat_s1,feat_s2])
+        embedding = self.dense2( self.dense1(feat_fused) )
         return embedding
 
 class Model_S2SPOT(tf.keras.Model):
     '''
     Model for Sentinel-2 and SPOT fusion
     '''
-    def __init__(self,drop,n_classes,n_filters=128,num_units=512):
+    def __init__(self,drop,n_classes,n_filters,fusion,num_units=512):
         super(Model_S2SPOT, self).__init__(name='Model_S2SPOT')
         self.s2_branch = S2_Branch(n_filters,drop)
         self.spot_branch = Spot_Branch(n_filters,drop)
-        self.concat = Concatenate()
+        if fusion == 'concat':
+            self.fusion = Concatenate()
+        elif fusion == 'add':
+            self.fusion = Add()
         self.dense1 = FC(num_units)
         self.dense2 = FC(num_units)
         self.softmax1 = SoftMax(n_classes)
@@ -205,23 +214,23 @@ class Model_S2SPOT(tf.keras.Model):
     def call(self, x_s2, x_ms, x_pan, is_training):
         feat_s2 = self.s2_branch(x_s2,is_training)
         feat_spot = self.spot_branch(x_ms,x_pan,is_training)
-        feat_concat = self.concat([feat_s2,feat_spot])
-        concat_pred = self.softmax1( self.dense2( self.dense1(feat_concat) ) )
+        feat_fused = self.fusion([feat_s2,feat_spot])
+        fused_pred = self.softmax1( self.dense2( self.dense1(feat_fused) ) )
         s2_pred = self.softmax2(feat_s2)
         spot_pred = self.softmax3(feat_spot)
-        return s2_pred,spot_pred,concat_pred
+        return s2_pred,spot_pred,fused_pred
     def getEmbedding(self, x_s2, x_ms, x_pan, is_training=False):
         feat_s2 = self.s2_branch(x_s2,is_training)
         feat_spot = self.spot_branch(x_ms,x_pan,is_training)
-        feat_concat = self.concat([feat_s2,feat_spot])
-        embedding = self.dense2( self.dense1(feat_concat) )
+        feat_fused = self.fusion([feat_s2,feat_spot])
+        embedding = self.dense2( self.dense1(feat_fused) )
         return embedding
 
 class Model_S1(tf.keras.Model):
     '''
     Model for Sentinel-1 alone
     '''
-    def __init__(self,drop,n_classes,n_filters=128,num_units=512):
+    def __init__(self,drop,n_classes,n_filters,num_units=512):
         super(Model_S1, self).__init__(name='Model_S1')
         self.s1_branch = S1_Branch(n_filters,drop)
         self.dense1 = FC(num_units)
