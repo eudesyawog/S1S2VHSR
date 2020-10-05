@@ -136,7 +136,7 @@ class Model_S1S2SPOT(tf.keras.Model):
         self.spot_branch = Spot_Branch(n_filters,drop)
         if fusion == 'concat':
             self.fusion = Concatenate()
-        elif fusion == 'add'
+        elif fusion == 'add':
             self.fusion = Add()
         self.dense1 = FC(num_units)
         self.dense2 = FC(num_units)
