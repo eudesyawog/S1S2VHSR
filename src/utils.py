@@ -24,7 +24,7 @@ def transform_y (y,prediction):
 
 def format_cnn1d (array_path):
     '''
-    Format (S2) data  for 1D-CNN
+    Format data  for 1D-CNN
     output shape: (number of samples, number of timestamps, number of bands)
     '''
     array = np.load(array_path)
@@ -33,7 +33,7 @@ def format_cnn1d (array_path):
 
 def format_cnn2d (array_path):
     '''
-    Format (S1, MS, Pan) data  for 2D-CNN
+    Format data  for 2D-CNN
     output shape: (number of samples, width, height, number of timestamps * number of bands)
     '''
     array = np.load(array_path)
