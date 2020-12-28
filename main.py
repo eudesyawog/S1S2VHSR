@@ -50,7 +50,7 @@ if __name__ == '__main__':
     if not args.out_path is None :
         out_path = args.out_path
     else:
-        out_path = os.path.join('models',f'model_{"".join(el.upper() for el in lst_sensor)}')
+        out_path = os.path.join('models',f'model_{"_".join(el.upper() for el in lst_sensor)}')
     batch_size = args.batch_size
     n_epochs = args.num_epochs
     lr = args.learning_rate
