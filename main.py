@@ -50,7 +50,7 @@ if __name__ == '__main__':
     if not args.out_path is None :
         out_path = args.out_path
     else:
-        out_path = os.path.join('models',f'model_{"_".join(el.upper() for el in lst_sensor)}')
+        out_path = os.path.join('models',f'model_{"_".join(el.upper() for el in sensor)}')
     batch_size = args.batch_size
     n_epochs = args.num_epochs
     lr = args.learning_rate
@@ -135,7 +135,7 @@ if __name__ == '__main__':
         model = Model_SPOT (drop,n_classes,num_feat,sensor)
 
     # Learning stage
-    checkpoint_path = os.path.join(out_path,'model') 
+    checkpoint_path = os.path.join(out_path,f'model_{n_split}') 
 
     run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
             valid_S1,valid_S2,valid_MS,valid_Pan,valid_y,
@@ -178,9 +178,9 @@ if __name__ == '__main__':
         test_MS,test_Pan = (None,None)
 
     # Inference stage
-    result_path = os.path.join(out_path,'pred.npy')
+    result_path = os.path.join(out_path,f'pred_{n_split}.npy')
     restore (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,result_path,lst_sensor,tqdm_disable)
 
     # Get Embedding on test set
-    embedding_path = os.path.join(out_path,'embedding.npy')
+    embedding_path = os.path.join(out_path,f'embedding_{n_split}.npy')
     getEmbedding (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,embedding_path,lst_sensor,tqdm_disable)
