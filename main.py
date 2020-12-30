@@ -132,7 +132,7 @@ if __name__ == '__main__':
     elif len (sensor) == 1 and 's2' in lst_sensor :
         model = Model_S2 (drop,n_classes,num_feat,sensor)
     elif len (sensor) == 1 and 'spot' in lst_sensor :
-        model = Model_SPOT (drop,n_classes,num_feat,sensor)
+        model = Model_SPOT (drop,n_classes,num_feat)
 
     # Learning stage
     checkpoint_path = os.path.join(out_path,f'model_{n_split}') 
