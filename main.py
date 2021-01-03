@@ -9,6 +9,11 @@ from src.train import run
 from src.test import restore
 from src.embedding import getEmbedding
 
+def boolean_string(s):
+    if s not in {'False', 'True'}:
+        raise ValueError('Not a valid boolean string')
+    return s == 'True'
+
 if __name__ == '__main__':
     
     # Parsing arguments
@@ -33,7 +38,8 @@ if __name__ == '__main__':
     parser.add_argument('-w','--weight',dest='weight',help='Weight for auxiliary classifiers',default=0.3,type=float)
     parser.add_argument('-f','--fusion',dest='fusion',help='How to fuse per source features ?',choices=['add','concat'],default='concat')
     parser.add_argument('-nf','--num_feat',dest='num_feat',help='Number of per source features',default=128,type=float)
-    parser.add_argument('-tqdm',dest='tqdm',help='Display tqdm progress bar',default=False,type=bool)
+    parser.add_argument('-noaux',dest='noaux',help='Disable auxiliary classifiers',default=False,type=boolean_string)
+    parser.add_argument('-tqdm',dest='tqdm',help='Display tqdm progress bar',default=False,type=boolean_string)
     args = parser.parse_args()
 
     # Get argument values
@@ -59,7 +65,8 @@ if __name__ == '__main__':
     fusion = args.fusion
     num_feat = args.num_feat
     n_split = args.num_split
-    tqdm_disable = args.tqdm
+    noaux = args.noaux
+    tqdm_display = args.tqdm
     
     # Create output path if does not exist
     Path(out_path).mkdir(parents=True, exist_ok=True) 
@@ -122,11 +129,11 @@ if __name__ == '__main__':
 
     # Create the Tensorflow model
     if len (sensor) == 3:
-        model = Model_S1S2SPOT (drop,n_classes,num_feat,fusion,sensor)
+        model = Model_S1S2SPOT (drop,n_classes,num_feat,fusion,sensor,noaux)
     elif len (sensor) == 2 and 's1' in lst_sensor and 's2' in lst_sensor :
-        model = Model_S1S2 (drop,n_classes,num_feat,fusion,sensor)
+        model = Model_S1S2 (drop,n_classes,num_feat,fusion,sensor,noaux)
     elif len (sensor) == 2 and 's2' in lst_sensor and 'spot' in lst_sensor :
-        model = Model_S2SPOT (drop,n_classes,num_feat,fusion,sensor)
+        model = Model_S2SPOT (drop,n_classes,num_feat,fusion,sensor,noaux)
     elif len (sensor) == 1 and 's1' in lst_sensor :
         model = Model_S1 (drop,n_classes,num_feat,sensor)
     elif len (sensor) == 1 and 's2' in lst_sensor :
@@ -139,7 +146,7 @@ if __name__ == '__main__':
 
     run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
             valid_S1,valid_S2,valid_MS,valid_Pan,valid_y,
-                checkpoint_path,batch_size,lr,n_epochs,lst_sensor,weight,tqdm_disable)
+                checkpoint_path,batch_size,lr,n_epochs,lst_sensor,weight,noaux,tqdm_display)
 
     # Load Test set 
     test_y = format_y(gt_path+f'/Test/Ground_truth_Test_split_{n_split}.npy',encode=False)#'/test_gt.npy',encode=False)
@@ -179,8 +186,8 @@ if __name__ == '__main__':
 
     # Inference stage
     result_path = os.path.join(out_path,f'pred_{n_split}.npy')
-    restore (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,result_path,lst_sensor,tqdm_disable)
+    restore (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,result_path,lst_sensor,tqdm_display)
 
     # Get Embedding on test set
     embedding_path = os.path.join(out_path,f'embedding_{n_split}.npy')
-    getEmbedding (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,embedding_path,lst_sensor,tqdm_disable)
+    getEmbedding (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,embedding_path,lst_sensor,tqdm_display)

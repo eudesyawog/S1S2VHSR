@@ -161,8 +161,9 @@ class Model_S1S2SPOT(tf.keras.Model):
     '''
     Model for Sentinel-1, Sentinel-2 and SPOT fusion
     '''
-    def __init__(self,drop,n_classes,n_filters,fusion,sensor,num_units=512):
+    def __init__(self,drop,n_classes,n_filters,fusion,sensor,noaux,num_units=512):
         super(Model_S1S2SPOT, self).__init__(name='Model_S1S2SPOT')
+        self.noaux = noaux
         if 's1-1D' in sensor:
             self.s1_branch = CNN1D_Encoder(n_filters,drop)
         elif 's1-2D'in sensor:
@@ -183,18 +184,22 @@ class Model_S1S2SPOT(tf.keras.Model):
         self.dense1 = FC(num_units)
         self.dense2 = FC(num_units)
         self.softmax1 = SoftMax(n_classes)
-        self.softmax2 = SoftMax(n_classes)
-        self.softmax3 = SoftMax(n_classes)
-        self.softmax4 = SoftMax(n_classes)
+        if not self.noaux :
+            self.softmax2 = SoftMax(n_classes)
+            self.softmax3 = SoftMax(n_classes)
+            self.softmax4 = SoftMax(n_classes)
     def call(self,x_s1, x_s2, x_ms, x_pan, is_training):
         feat_s1 = self.s1_branch(x_s1,is_training)
         feat_s2 = self.s2_branch(x_s2,is_training)
         feat_spot = self.spot_branch(x_ms,x_pan,is_training)
         feat_fused = self.fusion([feat_s1,feat_s2,feat_spot])
         fused_pred = self.softmax1( self.dense2( self.dense1(feat_fused) ) )
-        s1_pred = self.softmax2(feat_s1)
-        s2_pred = self.softmax3(feat_s2)
-        spot_pred = self.softmax4(feat_spot)
+        if not self.noaux:
+            s1_pred = self.softmax2(feat_s1)
+            s2_pred = self.softmax3(feat_s2)
+            spot_pred = self.softmax4(feat_spot)
+        else :
+            s1_pred,s2_pred,spot_pred = (None,None,None)
         return s1_pred,s2_pred,spot_pred,fused_pred
     def getEmbedding(self, x_s1, x_s2, x_ms, x_pan, is_training=False):
         feat_spot = self.spot_branch(x_ms,x_pan,is_training)
@@ -208,8 +213,9 @@ class Model_S1S2(tf.keras.Model):
     '''
     Model for Sentinel-1 and Sentinel-2 fusion
     '''
-    def __init__(self,drop,n_classes,n_filters,fusion,sensor,num_units=512):
+    def __init__(self,drop,n_classes,n_filters,fusion,sensor,noaux,num_units=512):
         super(Model_S1S2, self).__init__(name='Model_S1S2')
+        self.noaux = noaux
         if 's1-1D' in sensor:
             self.s1_branch = CNN1D_Encoder(n_filters,drop)
         elif 's1-2D'in sensor:
@@ -229,15 +235,19 @@ class Model_S1S2(tf.keras.Model):
         self.dense1 = FC(num_units)
         self.dense2 = FC(num_units)
         self.softmax1 = SoftMax(n_classes)
-        self.softmax2 = SoftMax(n_classes)
-        self.softmax3 = SoftMax(n_classes)
+        if not self.noaux:
+            self.softmax2 = SoftMax(n_classes)
+            self.softmax3 = SoftMax(n_classes)
     def call(self,x_s1, x_s2, is_training):
         feat_s1 = self.s1_branch(x_s1,is_training)
         feat_s2 = self.s2_branch(x_s2,is_training)
         feat_fused = self.fusion([feat_s1,feat_s2])
         fused_pred = self.softmax1( self.dense2( self.dense1(feat_fused) ) )
-        s1_pred = self.softmax2(feat_s1)
-        s2_pred = self.softmax3(feat_s2)
+        if not self.noaux:
+            s1_pred = self.softmax2(feat_s1)
+            s2_pred = self.softmax3(feat_s2)
+        else:
+            s1_pred,s2_pred = (None,None)
         return s1_pred,s2_pred,fused_pred
     def getEmbedding(self, x_s1, x_s2, is_training=False):
         feat_s1 = self.s1_branch(x_s1,is_training)
@@ -250,8 +260,9 @@ class Model_S2SPOT(tf.keras.Model):
     '''
     Model for Sentinel-2 and SPOT fusion
     '''
-    def __init__(self,drop,n_classes,n_filters,fusion,sensor,num_units=512):
+    def __init__(self,drop,n_classes,n_filters,fusion,sensor,noaux,num_units=512):
         super(Model_S2SPOT, self).__init__(name='Model_S2SPOT')
+        self.noaux = noaux
         if 's2-1D' in sensor:
             self.s2_branch = CNN1D_Encoder(n_filters,drop)
         elif 's2-2D' in sensor:
@@ -266,15 +277,19 @@ class Model_S2SPOT(tf.keras.Model):
         self.dense1 = FC(num_units)
         self.dense2 = FC(num_units)
         self.softmax1 = SoftMax(n_classes)
-        self.softmax2 = SoftMax(n_classes)
-        self.softmax3 = SoftMax(n_classes)
+        if not self.noaux:
+            self.softmax2 = SoftMax(n_classes)
+            self.softmax3 = SoftMax(n_classes)
     def call(self, x_s2, x_ms, x_pan, is_training):
         feat_s2 = self.s2_branch(x_s2,is_training)
         feat_spot = self.spot_branch(x_ms,x_pan,is_training)
         feat_fused = self.fusion([feat_s2,feat_spot])
         fused_pred = self.softmax1( self.dense2( self.dense1(feat_fused) ) )
-        s2_pred = self.softmax2(feat_s2)
-        spot_pred = self.softmax3(feat_spot)
+        if not self.noaux:
+            s2_pred = self.softmax2(feat_s2)
+            spot_pred = self.softmax3(feat_spot)
+        else:
+            s2_pred,spot_pred = (None,None)
         return s2_pred,spot_pred,fused_pred
     def getEmbedding(self, x_s2, x_ms, x_pan, is_training=False):
         feat_s2 = self.s2_branch(x_s2,is_training)
