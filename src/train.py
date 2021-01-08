@@ -17,12 +17,16 @@ def train_info (model,checkpoint_path,epoch,train_loss,train_acc,valid_loss,vali
         model.save_weights(checkpoint_path)
         print (f'{valid_acc.name} improved from {best_acc} to {valid_acc.result()}, saving to {checkpoint_path}')
         best_acc = valid_acc.result()
-            
-        # Reset metrics for the next epoch
-        train_loss.reset_states()
-        train_acc.reset_states()
-        valid_loss.reset_states()
-        valid_acc.reset_states()
+        
+    # Reset metrics for the next epoch
+    train_loss.reset_states()
+    train_acc.reset_states()
+    valid_loss.reset_states()
+    valid_acc.reset_states()
+
+    # if epoch == 0:
+    #     print (model.summary())
+
     return best_acc
 
 @tf.function
@@ -232,4 +236,3 @@ def run (model,train_S1,train_S2,train_MS,train_Pan,train_y,
             stop = time.time()
             elapsed = stop - start
             best_acc = train_info (model,checkpoint_path,epoch,train_loss,train_acc,valid_loss,valid_acc,elapsed,best_acc,valid_y,pred)
-    print (model.summary())
