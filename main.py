@@ -72,57 +72,57 @@ if __name__ == '__main__':
     Path(out_path).mkdir(parents=True, exist_ok=True) 
 
     # Load Training and Validation set
-    train_y = format_y(gt_path+f'/Training/Ground_truth_Training_split_{n_split}.npy')#'/train_gt.npy')
+    train_y = format_y(gt_path+'/train_gt.npy')
     print ('Training GT:',train_y.shape)
-    valid_y = format_y(gt_path+f'/Validation/Ground_truth_Validation_split_{n_split}.npy')#'/valid_gt.npy')
+    valid_y = format_y(gt_path+'/valid_gt.npy')
     print ('Validation GT:', valid_y.shape)
     n_classes = len(np.unique(train_y))
     print ('Number of classes:',n_classes)
     
     if 's1-1D' in sensor :
-        train_S1 = format_cnn1d(s1_path+f'/Training/Sentinel-1_Training_split_{n_split}.npy')#'/train_S1.npy')
+        train_S1 = format_cnn1d(s1_path+'/train_S1.npy')
         print ('Training S1:',train_S1.shape)
-        valid_S1 = format_cnn1d(s1_path+f'/Validation/Sentinel-1_Validation_split_{n_split}.npy')#'/valid_S1.npy')
+        valid_S1 = format_cnn1d(s1_path+'/valid_S1.npy')
         print ('Validation S1:',valid_S1.shape)
     elif 's1-2D' in sensor :
-        train_S1 = format_cnn2d(s1_path+f'/Training/Sentinel-1_Training_split_{n_split}.npy')#'/train_S1.npy')
+        train_S1 = format_cnn2d(s1_path+'/train_S1.npy')
         print ('Training S1:',train_S1.shape)
-        valid_S1 = format_cnn2d(s1_path+f'/Validation/Sentinel-1_Validation_split_{n_split}.npy')#'/valid_S1.npy')
+        valid_S1 = format_cnn2d(s1_path+'/valid_S1.npy')
         print ('Validation S1:',valid_S1.shape)
     elif 's1-3D' in sensor :
-        train_S1 = np.load(s1_path+f'/Training/Sentinel-1_Training_split_{n_split}.npy')#'/train_S1.npy')
+        train_S1 = np.load(s1_path+'/train_S1.npy')
         print ('Training S1:',train_S1.shape)
-        valid_S1 = np.load(s1_path+f'/Validation/Sentinel-1_Validation_split_{n_split}.npy')#'/valid_S1.npy')
+        valid_S1 = np.load(s1_path+'/valid_S1.npy')
         print ('Validation S1:',valid_S1.shape)
     else:
         train_S1,valid_S1 = (None,None)
     
     if 's2-1D' in sensor :
-        train_S2 = format_cnn1d(s2_path+f'/Training/Sentinel-2_Training_split_{n_split}.npy')#'/train_S2.npy')
+        train_S2 = format_cnn1d(s2_path+'/train_S2.npy')
         print ('Training S2:',train_S2.shape)
-        valid_S2 = format_cnn1d(s2_path+f'/Validation/Sentinel-2_Validation_split_{n_split}.npy')#'/valid_S2.npy')
+        valid_S2 = format_cnn1d(s2_path+'/valid_S2.npy')
         print ('Validation S2:',valid_S2.shape)
     elif 's2-2D' in sensor :
-        train_S2 = format_cnn2d(s2_path+f'/Training/Sentinel-2_Training_split_{n_split}.npy')#'/train_S2.npy')
+        train_S2 = format_cnn2d(s2_path+'/train_S2.npy')
         print ('Training S2:',train_S2.shape)
-        valid_S2 = format_cnn2d(s2_path+f'/Validation/Sentinel-2_Validation_split_{n_split}.npy')#'/valid_S2.npy')
+        valid_S2 = format_cnn2d(s2_path+'/valid_S2.npy')
         print ('Validation S2:',valid_S2.shape)
     elif 's2-3D' in sensor :
-        train_S2 = np.load(s2_path+f'/Training/Sentinel-2_Training_split_{n_split}.npy')#'/train_S2.npy')
+        train_S2 = np.load(s2_path+'/train_S2.npy')
         print ('Training S2:',train_S2.shape)
-        valid_S2 = np.load(s2_path+f'/Validation/Sentinel-2_Validation_split_{n_split}.npy')#'/valid_S2.npy')
+        valid_S2 = np.load(s2_path+'/valid_S2.npy')
         print ('Validation S2:',valid_S2.shape)
     else:
         train_S2,valid_S2 = (None,None)
 
     if 'spot' in sensor :
-        train_MS = format_cnn2d(ms_path+f'/Training/Spot-MS_Training_split_{n_split}.npy')#'/train_MS.npy')
+        train_MS = format_cnn2d(ms_path+'/train_MS.npy')
         print ('Training MS:',train_MS.shape)
-        valid_MS = format_cnn2d(ms_path+f'/Validation/Spot-MS_Validation_split_{n_split}.npy')#'/valid_MS.npy')
+        valid_MS = format_cnn2d(ms_path+'/valid_MS.npy')
         print ('Validation MS:',valid_MS.shape)
-        train_Pan = format_cnn2d(pan_path+f'/Training/Spot-P_Training_split_{n_split}.npy')#'/train_Pan.npy')
+        train_Pan = format_cnn2d(pan_path+'/train_Pan.npy')
         print ('Training Pan:',train_Pan.shape)
-        valid_Pan = format_cnn2d(pan_path+f'/Validation/Spot-P_Validation_split_{n_split}.npy')#'/valid_Pan.npy')
+        valid_Pan = format_cnn2d(pan_path+'/valid_Pan.npy')
         print ('Validation Pan:',valid_Pan.shape)
     else:
         train_MS,valid_MS,train_Pan,valid_Pan = (None,None,None,None)
@@ -149,37 +149,37 @@ if __name__ == '__main__':
                 checkpoint_path,batch_size,lr,n_epochs,lst_sensor,weight,noaux,tqdm_display)
 
     # Load Test set 
-    test_y = format_y(gt_path+f'/Test/Ground_truth_Test_split_{n_split}.npy',encode=False)#'/test_gt.npy',encode=False)
+    test_y = format_y(gt_path+'/test_gt.npy',encode=False)
     print ('Test GT:',test_y.shape)
     
     if 's1-1D' in sensor :
-        test_S1 = format_cnn1d(s1_path+f'/Test/Sentinel-1_Test_split_{n_split}.npy')#'/test_S1.npy')
+        test_S1 = format_cnn1d(s1_path+'/test_S1.npy')
         print ('Test S1:',test_S1.shape)
     elif 's1-2D' in sensor :
-        test_S1 = format_cnn2d(s1_path+f'/Test/Sentinel-1_Test_split_{n_split}.npy')#'/test_S1.npy')
+        test_S1 = format_cnn2d(s1_path+'/test_S1.npy')
         print ('Test S1:',test_S1.shape)
     elif 's1-3D' in sensor :
-        test_S1 = np.load(s1_path+f'/Test/Sentinel-1_Test_split_{n_split}.npy')#'/test_S1.npy')
+        test_S1 = np.load(s1_path+'/test_S1.npy')
         print ('Test S1:',test_S1.shape)
     else:
         test_S1 = None
 
     if 's2-1D' in sensor :
-        test_S2 = format_cnn1d(s2_path+f'/Test/Sentinel-2_Test_split_{n_split}.npy')#'/test_S2.npy')
+        test_S2 = format_cnn1d(s2_path+'/test_S2.npy')
         print ('Test S2:',test_S2.shape)
     elif 's2-2D' in sensor :
-        test_S2 = format_cnn2d(s2_path+f'/Test/Sentinel-2_Test_split_{n_split}.npy')#'/test_S2.npy')
+        test_S2 = format_cnn2d(s2_path+'/test_S2.npy')
         print ('Test S2:',test_S2.shape)
     elif 's2-3D' in sensor :
-        test_S2 = np.load(s2_path+f'/Test/Sentinel-2_Test_split_{n_split}.npy')#'/test_S2.npy')
+        test_S2 = np.load(s2_path+'/test_S2.npy')
         print ('Test S2:',test_S2.shape)
     else:
         test_S2 = None
 
     if 'spot' in sensor :
-        test_MS = format_cnn2d(ms_path+f'/Test/Spot-MS_Test_split_{n_split}.npy')#'/test_MS.npy')
+        test_MS = format_cnn2d(ms_path+'/test_MS.npy')
         print ('Test MS:',test_MS.shape)
-        test_Pan = format_cnn2d(pan_path+f'/Test/Spot-P_Test_split_{n_split}.npy')#'/test_Pan.npy')
+        test_Pan = format_cnn2d(pan_path+'/test_Pan.npy')
         print ('Test Pan:',test_Pan.shape)
     else:
         test_MS,test_Pan = (None,None)
