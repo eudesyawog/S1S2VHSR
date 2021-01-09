@@ -21,7 +21,7 @@ python main.py s1_path s2_path ms_path pan_path gt_path
 
 ### Running ablation models 
 
-- available cases: S1 and S2, S2 and SPOT, S1, S2 and SPOT. S1 and S2 can be leveraged with 1D, 2D or 3D CNN. SPOT data are leveraged only with a 2D CNN.
+- available cases: S1 and S2, S2 and SPOT, S1, S2 and SPOT. S1 and S2 data can be leveraged with 1D, 2D or 3D CNN. SPOT data are leveraged only with a 2D CNN.
 
 - example for S1 with 2D-CNN and S2 with 1D-CNN `python main.py s1_path s2_path ms_path pan_path gt_path -s s1-2D s2-1D`
 
