@@ -24,8 +24,8 @@ def train_info (model,checkpoint_path,epoch,train_loss,train_acc,valid_loss,vali
     valid_loss.reset_states()
     valid_acc.reset_states()
 
-    # if epoch == 0:
-    #     print (model.summary())
+    if epoch == 0:
+        print (model.summary())
 
     return best_acc
 
