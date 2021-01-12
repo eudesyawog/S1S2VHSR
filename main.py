@@ -39,6 +39,7 @@ if __name__ == '__main__':
     parser.add_argument('-f','--fusion',dest='fusion',help='How to fuse per source features ?',choices=['add','concat'],default='concat')
     parser.add_argument('-nf','--num_feat',dest='num_feat',help='Number of per source features',default=128,type=float)
     parser.add_argument('-noaux',dest='noaux',help='Disable auxiliary classifiers',default=False,type=boolean_string)
+    parser.add_argument('-embed',dest='embed',help='Extract learnt features',default=False,type=boolean_string)
     parser.add_argument('-tqdm',dest='tqdm',help='Display tqdm progress bar',default=False,type=boolean_string)
     args = parser.parse_args()
 
@@ -66,6 +67,7 @@ if __name__ == '__main__':
     num_feat = args.num_feat
     n_split = args.num_split
     noaux = args.noaux
+    embed = args.embed
     tqdm_display = args.tqdm
     
     # Create output path if does not exist
@@ -189,5 +191,6 @@ if __name__ == '__main__':
     restore (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,result_path,lst_sensor,tqdm_display)
 
     # Get Embedding on test set
-    embedding_path = os.path.join(out_path,f'embedding_{n_split}.npy')
-    getEmbedding (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,embedding_path,lst_sensor,tqdm_display)
+    if embed:
+        embedding_path = os.path.join(out_path,f'embedding_{n_split}.npy')
+        getEmbedding (model,test_S1,test_S2,test_MS,test_Pan,test_y,batch_size,checkpoint_path,embedding_path,lst_sensor,tqdm_display)
