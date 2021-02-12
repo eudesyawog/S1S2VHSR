@@ -5,7 +5,7 @@ import pandas as pd
 import tensorflow as tf 
 from src.utils import get_batch, get_iteration
 from sklearn.utils import shuffle
-from sklearn.metrics import accuracy_score,f1_score,cohen_kappa_score
+from sklearn.metrics import f1_score
 from tqdm import tqdm
 
 def save_history (dic, epoch, loss, acc, partition):

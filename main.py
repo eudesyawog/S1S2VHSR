@@ -82,7 +82,7 @@ if __name__ == '__main__':
         out_path = out_path+f'_feat{int(num_feat*2)}'
     if len(lst_sensor) > 1 :
         if weight != 0.3 :
-            out_path = out_path+f'_weigth_{weight}'
+            out_path = out_path+f'_Weight_{weight}'
         if supervision == 'labels' :
             out_path = out_path+f'_AuxWithLabels'
         elif supervision is None:
