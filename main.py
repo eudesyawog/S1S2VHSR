@@ -78,6 +78,15 @@ if __name__ == '__main__':
     tqdm_display = args.tqdm
     
     # Create output path if does not exist
+    if num_feat != 128 :
+        out_path = out_path+f'_feat{int(num_feat*2)}'
+    if len(lst_sensor) > 1 :
+        if weight != 0.3 :
+            out_path = out_path+f'_weigth_{weight}'
+        if supervision == 'labels' :
+            out_path = out_path+f'_AuxWithLabels'
+        elif supervision is None:
+            out_path = out_path+f'_NoDistill'
     Path(out_path).mkdir(parents=True, exist_ok=True) 
 
     # Load Training and Validation set
