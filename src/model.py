@@ -13,7 +13,7 @@ class Conv1DBlock(tf.keras.Model):
         self.drop_layer = Dropout(rate = drop)
     def call(self,inputs,is_training):
         conv = self.conv(inputs)
-        conv = self.bn(conv,training=is_training)
+        conv = self.bn(conv)
         return self.drop_layer(conv,training=is_training)
 
 class Conv2DBlock(tf.keras.Model):
@@ -27,7 +27,7 @@ class Conv2DBlock(tf.keras.Model):
         self.drop_layer = Dropout(rate = drop)
     def call(self,inputs,is_training):
         conv = self.conv(inputs)
-        conv = self.bn(conv,training=is_training)
+        conv = self.bn(conv)
         return self.drop_layer(conv,training=is_training)
 
 class Conv2DAndMaxPoolingBlock(tf.keras.Model):
@@ -42,7 +42,7 @@ class Conv2DAndMaxPoolingBlock(tf.keras.Model):
         self.drop_layer = Dropout(rate = drop)
     def call(self,inputs,is_training):
         conv = self.conv(inputs)
-        conv = self.bn(conv,training=is_training)
+        conv = self.bn(conv)
         conv = self.max_pool(conv)
         return self.drop_layer(conv,training=is_training)
 
@@ -57,7 +57,7 @@ class Conv3DBlock(tf.keras.Model):
         self.drop_layer = Dropout(rate = drop)
     def call(self,inputs,is_training):
         conv = self.conv(inputs)
-        conv = self.bn(conv,training=is_training)
+        conv = self.bn(conv)
         return self.drop_layer(conv,training=is_training)
 
 class FC(tf.keras.Model):
@@ -69,7 +69,7 @@ class FC(tf.keras.Model):
         self.dense = Dense(num_units, activation=act)
         self.bn = BatchNormalization()
     def call(self,inputs,is_training):
-        return self.bn ( self.dense(inputs), training=is_training )
+        return self.bn ( self.dense(inputs) )
 
 class SoftMax(Layer):
     '''

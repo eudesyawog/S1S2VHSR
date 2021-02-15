@@ -167,6 +167,10 @@ if __name__ == '__main__':
                 checkpoint_path,batch_size,lr,n_epochs,
                 lst_sensor,weight,supervision,train_hist,tqdm_display)
 
+    # Release memory
+    del train_S1,train_S2,train_MS,train_Pan,train_y
+    del valid_S1,valid_S2,valid_MS,valid_Pan,valid_y
+
     # Load Test set 
     test_y = format_y(gt_path+f'/Test/Ground_truth_Test_split_{n_split}.npy',encode=False)#'/test_gt.npy',encode=False)
     print ('Test GT:',test_y.shape)
