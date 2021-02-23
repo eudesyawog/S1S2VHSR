@@ -59,11 +59,7 @@ if __name__ == '__main__':
     lst_sensor = [el.split('-')[0] for el in sensor]
     if len(sensor) > 3 or len(lst_sensor)!=len(set(el.split('-')[0] for el in sensor)):
         sys.exit(f"{os.path.basename(__file__)}: error: Too much input sensor data or repeated input source")
-
-    if not args.out_path is None :
-        out_path = args.out_path
-    else:
-        out_path = os.path.join('models',os.path.dirname(gt_path).split('_')[-1],f'model_{"_".join(el.upper() for el in sensor)}')
+    
     batch_size = args.batch_size
     n_epochs = args.num_epochs
     lr = args.learning_rate
@@ -77,16 +73,19 @@ if __name__ == '__main__':
     train_hist = args.history
     tqdm_display = args.tqdm
     
-    # Create output path if does not exist
-    if num_feat != 128 :
-        out_path = out_path+f'_feat{int(num_feat*2)}'
-    if len(lst_sensor) > 1 :
-        if weight != 0.3 :
-            out_path = out_path+f'_Weight_{weight}'
-        if supervision == 'labels' :
-            out_path = out_path+f'_AuxWithLabels'
-        elif supervision is None:
-            out_path = out_path+f'_NoDistill'
+    if not args.out_path is None :
+        out_path = args.out_path
+    else:
+        out_path = os.path.join('models',os.path.dirname(gt_path).split('_')[-1],f'model_{"_".join(el.upper() for el in sensor)}')
+        if num_feat != 128 :
+            out_path = out_path+f'_feat{int(num_feat*2)}'
+        if len(lst_sensor) > 1 :
+            if weight != 0.3 :
+                out_path = out_path+f'_Weight_{weight}'
+            if supervision == 'labels' :
+                out_path = out_path+f'_HardLabels'
+            elif supervision is None:
+                out_path = out_path+f'_noSD'
     Path(out_path).mkdir(parents=True, exist_ok=True) 
 
     # Load Training and Validation set
